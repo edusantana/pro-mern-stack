@@ -1,3 +1,8 @@
-var contentNode = document.getElementById('contents');
-var component = <h1 className='verde'>Hello Mundo2!</h1>;   // A simple JSX component
+const contentNode = document.getElementById('contents');
+
+const continentes = ['Africa','America','Asia','Australia','Europa'];
+
+const mensagem = continentes.map(c => `Hello ${c}`).join('<br/>');
+
+var component = <p>{mensagem}</p>;
 ReactDOM.render(component, contentNode);  // Render the component inside the content Node
