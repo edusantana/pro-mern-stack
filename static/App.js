@@ -9,6 +9,16 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var contentNode = document.getElementById('contents');
+var issues = [{
+  id: 1, status: 'Open', owner: 'Ravan',
+  created: new Date('2018-08-15'), effort: 5,
+  completionDate: undefined, title: 'Erro no console quando clicamos em Adicionar'
+}, {
+  id: 2, status: 'Assigned', owner: 'Eddie',
+  created: new Date('2018-08-16'), effort: 14,
+  completionDate: new Date('2018-08-30'),
+  title: 'Faltando borda de baixo no painel'
+}];
 
 var IssueFilter = function (_React$Component) {
   _inherits(IssueFilter, _React$Component);
@@ -33,8 +43,70 @@ var IssueFilter = function (_React$Component) {
   return IssueFilter;
 }(React.Component);
 
-var IssueTable = function (_React$Component2) {
-  _inherits(IssueTable, _React$Component2);
+var IssueRow = function (_React$Component2) {
+  _inherits(IssueRow, _React$Component2);
+
+  function IssueRow() {
+    _classCallCheck(this, IssueRow);
+
+    return _possibleConstructorReturn(this, (IssueRow.__proto__ || Object.getPrototypeOf(IssueRow)).apply(this, arguments));
+  }
+
+  _createClass(IssueRow, [{
+    key: 'render',
+    value: function render() {
+      var issue = this.props.issue;
+      return React.createElement(
+        'tr',
+        null,
+        React.createElement(
+          'td',
+          null,
+          issue.id
+        ),
+        React.createElement(
+          'td',
+          null,
+          issue.status
+        ),
+        React.createElement(
+          'td',
+          null,
+          issue.owner
+        ),
+        React.createElement(
+          'td',
+          null,
+          issue.created.toDateString()
+        ),
+        React.createElement(
+          'td',
+          null,
+          issue.effort
+        ),
+        React.createElement(
+          'td',
+          null,
+          issue.completionDate ? issue.completionDate.toDateString() : ''
+        ),
+        React.createElement(
+          'td',
+          null,
+          issue.title
+        )
+      );
+    }
+  }]);
+
+  return IssueRow;
+}(React.Component);
+
+IssueRow.defaultProps = {
+  issue_title: "-- sem título --"
+};
+
+var IssueTable = function (_React$Component3) {
+  _inherits(IssueTable, _React$Component3);
 
   function IssueTable() {
     _classCallCheck(this, IssueTable);
@@ -45,10 +117,61 @@ var IssueTable = function (_React$Component2) {
   _createClass(IssueTable, [{
     key: 'render',
     value: function render() {
+      var issueRows = this.props.issues.map(function (issue) {
+        return React.createElement(IssueRow, { key: issue.id, issue: issue });
+      });
+      var borderedStyle = { border: "1px solid silver", padding: 6 };
       return React.createElement(
-        'div',
-        null,
-        'Lugar da tabela de issues'
+        'table',
+        { className: 'bordered-table' },
+        React.createElement(
+          'thead',
+          null,
+          React.createElement(
+            'tr',
+            null,
+            React.createElement(
+              'th',
+              null,
+              'Id'
+            ),
+            React.createElement(
+              'th',
+              null,
+              'Status'
+            ),
+            React.createElement(
+              'th',
+              null,
+              'Owner'
+            ),
+            React.createElement(
+              'th',
+              null,
+              'Created'
+            ),
+            React.createElement(
+              'th',
+              null,
+              'Effort'
+            ),
+            React.createElement(
+              'th',
+              null,
+              'Completion Date'
+            ),
+            React.createElement(
+              'th',
+              null,
+              'Title'
+            )
+          )
+        ),
+        React.createElement(
+          'tbody',
+          null,
+          issueRows
+        )
       );
     }
   }]);
@@ -56,8 +179,8 @@ var IssueTable = function (_React$Component2) {
   return IssueTable;
 }(React.Component);
 
-var IssueAdd = function (_React$Component3) {
-  _inherits(IssueAdd, _React$Component3);
+var IssueAdd = function (_React$Component4) {
+  _inherits(IssueAdd, _React$Component4);
 
   function IssueAdd() {
     _classCallCheck(this, IssueAdd);
@@ -79,18 +202,54 @@ var IssueAdd = function (_React$Component3) {
   return IssueAdd;
 }(React.Component);
 
-var IssueList = function (_React$Component4) {
-  _inherits(IssueList, _React$Component4);
+var IssueList = function (_React$Component5) {
+  _inherits(IssueList, _React$Component5);
 
   function IssueList() {
     _classCallCheck(this, IssueList);
 
-    return _possibleConstructorReturn(this, (IssueList.__proto__ || Object.getPrototypeOf(IssueList)).apply(this, arguments));
+    var _this5 = _possibleConstructorReturn(this, (IssueList.__proto__ || Object.getPrototypeOf(IssueList)).call(this));
+
+    _this5.state = { issues: [] };
+    _this5.createTestIssue = _this5.createTestIssue.bind(_this5);
+    setTimeout(_this5.createTestIssue, 2000);
+    return _this5;
   }
 
   _createClass(IssueList, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      this.loadData();
+    }
+  }, {
+    key: 'loadData',
+    value: function loadData() {
+      var _this6 = this;
+
+      setTimeout(function () {
+        _this6.setState({ issues: issues });
+      });
+    }
+  }, {
+    key: 'createIssue',
+    value: function createIssue(newIssue) {
+      var newIssues = this.state.issues.slice();
+      newIssue.id = this.state.issues.length + 1;
+      newIssues.push(newIssue);
+      this.setState({ issues: newIssues });
+    }
+  }, {
+    key: 'createTestIssue',
+    value: function createTestIssue() {
+      this.createIssue({
+        status: 'New', owner: 'Pieta', created: new Date(),
+        title: 'Completion date shoud be optional'
+      });
+    }
+  }, {
     key: 'render',
     value: function render() {
+      console.log("Contando renderizações");
       return React.createElement(
         'div',
         null,
@@ -101,7 +260,12 @@ var IssueList = function (_React$Component4) {
         ),
         React.createElement(IssueFilter, null),
         React.createElement('hr', null),
-        React.createElement(IssueTable, null),
+        React.createElement(IssueTable, { issues: this.state.issues }),
+        React.createElement(
+          'button',
+          { onClick: this.createTestIssue },
+          'Add'
+        ),
         React.createElement('hr', null),
         React.createElement(IssueAdd, null)
       );
