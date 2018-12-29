@@ -57,8 +57,6 @@ function IssueTable(props){
   );
 }
 
-
-
 class IssueAdd extends React.Component{
   constructor(){
     super();
