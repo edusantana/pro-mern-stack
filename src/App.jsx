@@ -68,8 +68,33 @@ class IssueTable extends React.Component {
 
 
 class IssueAdd extends React.Component{
+  constructor(){
+    super();
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  handleSubmit(e){
+    e.preventDefault();
+    const form = document.forms.issueAdd;
+    this.props.createIssue({
+        owner: form.owner.value,
+        title: form.title.value,
+        status: 'New',
+        created: new Date(),
+    });
+    // limpa o formulário para próxima entrada
+    form.owner.value="";
+    form.title.value="";
+  }
   render(){
-    return <div>Espaço para adicionar um formulário para adicionar um novo Issue</div>
+    return (
+      <div>
+        <form name="issueAdd" onSubmit={this.handleSubmit}>
+          <input type="text" name="owner" placeholder="Owner" />
+          <input type="text" name="title" placeholder="Title" />
+          <button>Add</button>
+        </form>
+      </div>
+    );
   }
 }
 
@@ -77,8 +102,7 @@ class IssueList extends React.Component {
   constructor(){
     super();
     this.state = {issues: []};
-    this.createTestIssue = this.createTestIssue.bind(this);
-    setTimeout(this.createTestIssue, 2000);
+    this.createIssue = this.createIssue.bind(this);
   }
   componentDidMount(){
     this.loadData();
@@ -94,12 +118,6 @@ class IssueList extends React.Component {
     newIssues.push(newIssue);
     this.setState({issues: newIssues});
   }
-  createTestIssue(){
-    this.createIssue({
-      status: 'New', owner: 'Pieta', created: new Date(),
-      title: 'Completion date shoud be optional',
-    });
-  }
   render(){
     console.log("Contando renderizações")
     return (
@@ -108,9 +126,8 @@ class IssueList extends React.Component {
         <IssueFilter />
         <hr />
         <IssueTable issues={this.state.issues} />
-        <button onClick={this.createTestIssue}>Add</button>
         <hr />
-        <IssueAdd />
+        <IssueAdd createIssue={this.createIssue}/>
       </div>
     );
   }
